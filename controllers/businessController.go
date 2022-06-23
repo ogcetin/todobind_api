@@ -13,11 +13,6 @@ import (
 
 type Business = models.Business
 
-var businessList = []Business{
-	{BusinessID: 1, Name: "Bekir A.Ş.F", Status: "active"},
-	{BusinessID: 2, Name: "Saimcan Limited", Status: "passive"},
-}
-
 func BusinessAll(c *gin.Context) {
 
 	rows, err := database.DB.Query("select * from business")
@@ -57,7 +52,10 @@ func BusinessOne(c *gin.Context) {
 }
 
 func BusinessAdd(c *gin.Context) {
-	var business Business
+	type BusinessAddForm struct {
+		Name string `json:"name" binding:"required,min=3"`
+	}
+	var business BusinessAddForm
 	if err := c.ShouldBindJSON(&business); err != nil {
 		c.JSON(http.StatusOK, gin.H{"status": "error", "message": err.Error(), "data": ""})
 		return
@@ -79,7 +77,14 @@ func BusinessUpdate(c *gin.Context) {
 	business_id := c.Param("business_id")
 	BusinessID, _ := strconv.Atoi(business_id)
 
-	var business Business
+	type BusinessUpdateForm struct {
+		BusinessID int    `json:"business_id" binding:"required,numeric"`
+		Name       string `json:"name" binding:"required"`
+		Status     string `json:"status" binding:"required"`
+	}
+
+	var business BusinessUpdateForm
+	business.BusinessID = BusinessID
 	if err := c.ShouldBindJSON(&business); err != nil {
 		c.JSON(http.StatusOK, gin.H{"status": "error", "message": err.Error(), "data": ""})
 		return

@@ -5,4 +5,6 @@ type User struct {
 	BusinessID int    `json:"business_id"`
 	Name       string `json:"name"`
 	Status     string `json:"status"`
+	Email      string `json:"email"`
+	Password   string `json:"password"`
 }
